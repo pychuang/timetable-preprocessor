@@ -24,6 +24,10 @@ def parse_timeinfo(t)
 	sched[:arrival_time] = t['ARRTime']
 	sched[:depart_time] = t['DEPTime']
 	sched[:station] = $station_map[t['Station']]
+	if sched[:station].nil?
+		puts "Station #{t['Station']} unknown"
+	end
+
 	sched
 end
 
@@ -56,15 +60,26 @@ $TypeMap = {
 def parse_train(ti)
 	train = {}
 	train[:car_class] = $ClassMap[ti['CarClass']]
+	if train[:car_class].nil?
+		puts "CarClass #{ti['CarClass']} unknown"
+	end
+
 	train[:cripple] = ti['Cripple'] == 'Y' ? true : false
 	train[:dining] = ti['Dinning'] == 'Y' ? true : false	# XML misspelled XD
 	train[:line] = $LineMap[ti['Line']]
+	if train[:line].nil?
+		puts "Line #{ti['Line']} unknown"
+	end
+
 	train[:clockwise] = ti['LineDir'] == '0' ? true : false
 	train[:note] = ti['Note']
 	train[:over_night] = ti['OverNightStn'] == '0' ? false : true
 	train[:package] = ti['Package'] == 'Y' ? true : false
 	train[:train_id] = ti['Train']
 	train[:type] = $TypeMap[ti['Type']]
+	if train[:type].nil?
+		puts "Type #{ti['Type']} unknown"
+	end
 
 	array = []
 	ti.xpath('TimeInfo').each do |t|
