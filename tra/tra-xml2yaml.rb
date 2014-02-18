@@ -106,9 +106,7 @@ def output_yaml(trains, outf)
 end
 
 def convert_xml(xml_path)
-	dirname = File.dirname(xml_path)
-	basename = File.basename(xml_path, File.extname(xml_path))
-	yaml_path = dirname + '/' + basename + '.yaml'
+	yaml_path = xml_path.chomp(File.extname(xml_path)) + '.yaml'
 
 	trains = parse_xml(xml_path)
 	output_yaml(trains, yaml_path)
@@ -116,7 +114,7 @@ end
 
 if __FILE__ == $PROGRAM_NAME
 	if ARGV.size < 1
-		puts "Usage: #{$PROGRAM_NAME} XMLs"
+		puts "Usage: #{$PROGRAM_NAME} XML..."
 		exit
 	end
 
