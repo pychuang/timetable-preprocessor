@@ -1,8 +1,10 @@
 #!/usr/bin/env ruby
 #encoding: utf-8
 
+require 'optparse'
 require 'nokogiri'
 require 'open-uri'
+require 'yaml'
 
 $station_map = {}
 
@@ -70,25 +72,43 @@ def parse_train(ti)
 		array.push(parse_timeinfo(t))
 	end
 	train[:schedule] = array
-	puts train
+	train
 end
 
-def parse_xml(doc)
+def parse_xml(inf)
 	trains = []
-	doc.xpath('//TrainInfo').each do |ti|
-		parse_train(ti)
-		break
+	File.open(inf) do |f|
+		Nokogiri::XML(f).xpath('//TrainInfo').each do |ti|
+			trains.push(parse_train(ti))
+		end
+	end
+	trains
+end
+
+def output_yaml(trains, outf)
+	File.open(outf, 'w') do |f|
+		f.write(trains.to_yaml)
 	end
 end
 
 if __FILE__ == $PROGRAM_NAME
-	if ARGV.size == 0
-		puts "Usage: #{$PROGRAM_NAME} XML"
-		exit
-	end
+	options = {}
+	option_parser = OptionParser.new do |opts|
+		opts.banner = "Usage: #{$PROGRAM_NAME} [options]"
+		opts.on('-i XML', '--input XML', 'TRA\' Opendata XML input file') do |xml|
+			options[:xml] = xml
+		end
+
+		opts.on('-o YAML', '--output YAML', 'YAML output file') do |yaml|
+			options[:yaml] = yaml
+		end
+	end.parse!
+
+	raise OptionParser::MissingArgument if options[:xml].nil?
+	raise OptionParser::MissingArgument if options[:yaml].nil?
 
 	get_station_mapping
 
-	doc = Nokogiri::XML(File.open(ARGV[0]))
-	parse_xml(doc)
+	trains = parse_xml(options[:xml])
+	output_yaml(trains, options[:yaml])
 end
