@@ -1,7 +1,6 @@
 #!/usr/bin/env ruby
 #encoding: utf-8
 
-require 'optparse'
 require 'nokogiri'
 require 'open-uri'
 require 'yaml'
@@ -9,7 +8,7 @@ require 'yaml'
 $station_map = {}
 
 def get_station_mapping
-	File.open('tra-opendata/tra-stations.txt') do |f|
+	File.open(File.dirname($PROGRAM_NAME) + '/tra-stations.txt') do |f|
 		f.each_line do |line|
 			items = line.split('-')
 			xml_station_id = items[0]
@@ -91,24 +90,24 @@ def output_yaml(trains, outf)
 	end
 end
 
+def convert_xml(xml_path)
+	dirname = File.dirname(xml_path)
+	basename = File.basename(xml_path, File.extname(xml_path))
+	yaml_path = dirname + '/' + basename + '.yaml'
+
+	trains = parse_xml(xml_path)
+	output_yaml(trains, yaml_path)
+end
+
 if __FILE__ == $PROGRAM_NAME
-	options = {}
-	option_parser = OptionParser.new do |opts|
-		opts.banner = "Usage: #{$PROGRAM_NAME} [options]"
-		opts.on('-i XML', '--input XML', 'TRA\' Opendata XML input file') do |xml|
-			options[:xml] = xml
-		end
-
-		opts.on('-o YAML', '--output YAML', 'YAML output file') do |yaml|
-			options[:yaml] = yaml
-		end
-	end.parse!
-
-	raise OptionParser::MissingArgument if options[:xml].nil?
-	raise OptionParser::MissingArgument if options[:yaml].nil?
+	if ARGV.size < 1
+		puts "Usage: #{$PROGRAM_NAME} XMLs"
+		exit
+	end
 
 	get_station_mapping
 
-	trains = parse_xml(options[:xml])
-	output_yaml(trains, options[:yaml])
+	ARGV.each do |xml_path|
+		convert_xml(xml_path)
+	end
 end
