@@ -8,15 +8,7 @@ require 'yaml'
 $station_map = {}
 
 def get_station_mapping
-	File.open(File.dirname($PROGRAM_NAME) + '/tra-stations.txt') do |f|
-		f.each_line do |line|
-			items = line.split('-')
-			xml_station_id = items[0]
-			station_name = items[1]
-
-			$station_map[xml_station_id] = station_name
-		end
-	end
+	$station_map = YAML.load_file(File.dirname($PROGRAM_NAME) + '/tra-stations.yaml')
 end
 
 def parse_timeinfo(t)
