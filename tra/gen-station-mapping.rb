@@ -33,7 +33,7 @@ end
 
 if __FILE__ == $PROGRAM_NAME
 	if ARGV.size < 1
-		puts "Usage: #{$PROGRAM_NAME} tra-station.txt"
+		puts "Usage: #{$PROGRAM_NAME} station-mapping.txt"
 		exit
 	end
 

@@ -8,7 +8,7 @@ require 'yaml'
 $station_map = {}
 
 def get_station_mapping
-	$station_map = YAML.load_file(File.dirname($PROGRAM_NAME) + '/tra-stations.yaml')
+	$station_map = YAML.load_file(File.dirname($PROGRAM_NAME) + '/station-mapping.yaml')
 end
 
 def parse_timeinfo(t)
