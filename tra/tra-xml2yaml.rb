@@ -67,7 +67,7 @@ def parse_train(ti)
 	train[:note] = ti['Note']
 	train[:over_night] = ti['OverNightStn'] == '0' ? false : true
 	train[:package] = ti['Package'] == 'Y' ? true : false
-	train[:train_id] = ti['Train']
+	train[:number] = ti['Train']
 	train[:type] = $TypeMap[ti['Type']]
 	if train[:type].nil?
 		puts "Type #{ti['Type']} unknown"
