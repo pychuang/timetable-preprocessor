@@ -50,7 +50,7 @@ $TypeMap = {
 }
 
 def parse_train(ti)
-	train = {}
+	train = { :company => :TRA }
 	train[:car_class] = $ClassMap[ti['CarClass']]
 	if train[:car_class].nil?
 		puts "CarClass #{ti['CarClass']} unknown"
