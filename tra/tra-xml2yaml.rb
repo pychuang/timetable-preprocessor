@@ -32,6 +32,20 @@ def parse_timeinfo(t)
 end
 
 $ClassMap = {
+	'1100' => :express,
+	'1101' => :express,
+	'1102' => :express,
+	'1107' => :express,
+	'1110' => :express,
+	'1120' => :rapid,
+	'1130' => :local,
+	'1131' => :local,
+	'1132' => :rapid,
+	'1140' => :rapid,
+	'1141' => :rapid,
+	'1150' => :local,
+}
+$ClassNameMap = {
 	'1100' => '自強',
 	'1101' => '自強',
 	'1102' => '太魯閣',
@@ -59,8 +73,9 @@ $TypeMap = {
 
 def parse_train(ti)
 	train = { :company => :TRA }
-	train[:car_class] = $ClassMap[ti['CarClass']]
-	if train[:car_class].nil?
+	train[:class] = $ClassMap[ti['CarClass']]
+	train[:name] = $ClassNameMap[ti['CarClass']]
+	if train[:name].nil?
 		puts "CarClass #{ti['CarClass']} unknown"
 	end
 
