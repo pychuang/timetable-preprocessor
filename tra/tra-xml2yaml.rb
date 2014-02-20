@@ -110,7 +110,10 @@ def transform_train_schedule(train)
 	departure_time = stops[0][:departure_time]
 	stops.shift
 
+	train[:origin] = departure_station
+
 	edges = []
+	arrival_station = nil
 	stops.each do |stop|
 		edge = {}
 		edge[:departure_station] = departure_station
@@ -136,6 +139,7 @@ def transform_train_schedule(train)
 		edges.push(edge)
 	end
 
+	train[:destination] = arrival_station
 	train[:schedule] = edges
 end
 
