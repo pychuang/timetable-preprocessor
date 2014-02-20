@@ -22,7 +22,7 @@ end
 def parse_timeinfo(t)
 	sched = {}
 	sched[:arrival_time] = convert_time(t['ARRTime'])
-	sched[:depart_time] = convert_time(t['DEPTime'])
+	sched[:departure_time] = convert_time(t['DEPTime'])
 	sched[:station] = $station_map[t['Station']]
 	if sched[:station].nil?
 		puts "Station #{t['Station']} unknown"
