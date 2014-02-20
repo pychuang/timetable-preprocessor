@@ -89,11 +89,48 @@ def parse_train(ti)
 	train
 end
 
+def transform_train_schedule(train)
+	stops = train[:schedule]
+	departure_station = stops[0][:station]
+	departure_time = stops[0][:departure_time]
+	stops.shift
+
+	edges = []
+	stops.each do |stop|
+		edge = {}
+		edge[:departure_station] = departure_station
+		edge[:departure_time] = departure_time
+
+		arrival_station = stop[:station]
+		arrival_time = stop[:arrival_time]
+
+		if arrival_time < departure_time
+			arrival_time += 1
+		end
+
+		edge[:arrival_station] = arrival_station
+		edge[:arrival_time] = arrival_time
+
+		departure_station = stop[:station]
+		departure_time = stop[:departure_time]
+
+		if departure_time < arrival_time
+			departure_time += 1
+		end
+
+		edges.push(edge)
+	end
+
+	train[:schedule] = edges
+end
+
 def parse_xml(inf)
 	trains = []
 	File.open(inf) do |f|
 		Nokogiri::XML(f).xpath('//TrainInfo').each do |ti|
-			trains.push(parse_train(ti))
+			train = parse_train(ti)
+			transform_train_schedule(train)
+			trains.push(train)
 		end
 	end
 	trains
