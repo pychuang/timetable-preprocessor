@@ -11,10 +11,18 @@ def get_station_mapping
 	$station_map = YAML.load_file(File.dirname($PROGRAM_NAME) + '/station-mapping.yaml')
 end
 
+def convert_time(t)
+	m = t.match(/(\d\d):(\d\d):(\d\d)/)
+	hour = m[1].to_i
+	min = m[2].to_i
+	sec = m[3].to_i
+	DateTime.new($year, $month, $day, hour, min, 0, '+8')
+end
+
 def parse_timeinfo(t)
 	sched = {}
-	sched[:arrival_time] = t['ARRTime']
-	sched[:depart_time] = t['DEPTime']
+	sched[:arrival_time] = convert_time(t['ARRTime'])
+	sched[:depart_time] = convert_time(t['DEPTime'])
 	sched[:station] = $station_map[t['Station']]
 	if sched[:station].nil?
 		puts "Station #{t['Station']} unknown"
@@ -104,6 +112,16 @@ def convert_xml(xml_path)
 	output_yaml(trains, yaml_path)
 end
 
+def get_filename_date(path)
+	filename = File.basename(path).chomp(File.extname(path))
+	m = filename.match(/(\d\d\d\d)(\d\d)(\d\d)/)
+	$year = m[1].to_i
+	$month = m[2].to_i
+	$day = m[3].to_i
+
+	puts "TimeTable for #{$year}/#{$month}/#{$day}"
+end
+
 if __FILE__ == $PROGRAM_NAME
 	if ARGV.size < 1
 		puts "Usage: #{$PROGRAM_NAME} XML..."
@@ -113,6 +131,7 @@ if __FILE__ == $PROGRAM_NAME
 	get_station_mapping
 
 	ARGV.each do |xml_path|
+		get_filename_date(xml_path)
 		convert_xml(xml_path)
 	end
 end
