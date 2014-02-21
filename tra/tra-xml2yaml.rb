@@ -96,6 +96,7 @@ def parse_train(ti)
 		puts "Type #{ti['Type']} unknown"
 	end
 
+	train[:date] = Date.new($year, $month, $day)
 	array = []
 	ti.xpath('TimeInfo').each do |t|
 		array.push(parse_timeinfo(t))
