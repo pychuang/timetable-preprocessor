@@ -21,8 +21,8 @@ end
 
 def parse_timeinfo(t)
 	sched = {}
-	sched[:arrival_time] = convert_time(t['ARRTime'])
-	sched[:departure_time] = convert_time(t['DEPTime'])
+	sched[:arrive_at] = convert_time(t['ARRTime'])
+	sched[:depart_at] = convert_time(t['DEPTime'])
 	sched[:station] = $station_map[t['Station']]
 	if sched[:station].nil?
 		puts "Station #{t['Station']} unknown"
@@ -73,7 +73,7 @@ $TypeMap = {
 
 def parse_train(ti)
 	train = { :company => :TRA }
-	train[:class] = $ClassMap[ti['CarClass']]
+	train[:rank] = $ClassMap[ti['CarClass']]
 	train[:name] = $ClassNameMap[ti['CarClass']]
 	if train[:name].nil?
 		puts "CarClass #{ti['CarClass']} unknown"
@@ -107,7 +107,7 @@ end
 def transform_train_schedule(train)
 	stops = train[:schedule]
 	departure_station = stops[0][:station]
-	departure_time = stops[0][:departure_time]
+	departure_time = stops[0][:depart_at]
 	stops.shift
 
 	train[:origin] = departure_station
@@ -116,21 +116,21 @@ def transform_train_schedule(train)
 	arrival_station = nil
 	stops.each do |stop|
 		edge = {}
-		edge[:departure_station] = departure_station
-		edge[:departure_time] = departure_time
+		edge[:depart_from] = departure_station
+		edge[:depart_at] = departure_time
 
 		arrival_station = stop[:station]
-		arrival_time = stop[:arrival_time]
+		arrival_time = stop[:arrive_at]
 
 		if arrival_time < departure_time
 			arrival_time += 1
 		end
 
-		edge[:arrival_station] = arrival_station
-		edge[:arrival_time] = arrival_time
+		edge[:arrive_to] = arrival_station
+		edge[:arrive_at] = arrival_time
 
 		departure_station = stop[:station]
-		departure_time = stop[:departure_time]
+		departure_time = stop[:depart_at]
 
 		if departure_time < arrival_time
 			departure_time += 1
