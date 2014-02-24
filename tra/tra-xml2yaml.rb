@@ -41,8 +41,8 @@ $ClassMap = {
 	'1130' => :local,
 	'1131' => :local,
 	'1132' => :rapid,
-	'1140' => :rapid,
-	'1141' => :rapid,
+	'1140' => :local,
+	'1141' => :local,
 	'1150' => :local,
 }
 $ClassNameMap = {
